@@ -5,6 +5,7 @@ pub struct Config {
     pub port: u16,
     pub public_base_url: String,
     pub database_path: String,
+    pub asset_dir: String,
 }
 
 impl Default for Config {
@@ -13,6 +14,7 @@ impl Default for Config {
             port: 8080,
             public_base_url: "http://localhost:8080".to_string(),
             database_path: "./urls.sqlite3".to_string(),
+            asset_dir: "frontend/dist".to_string(),
         }
     }
 }
@@ -27,6 +29,7 @@ impl Config {
                 .unwrap_or(defaults.port),
             public_base_url: env::var("PUBLIC_BASE_URL").unwrap_or(defaults.public_base_url),
             database_path: env::var("DATABASE_PATH").unwrap_or(defaults.database_path),
+            asset_dir: env::var("ASSET_DIR").unwrap_or(defaults.asset_dir),
         }
     }
 }
@@ -43,6 +46,7 @@ mod tests {
         env::remove_var("PORT");
         env::remove_var("PUBLIC_BASE_URL");
         env::remove_var("DATABASE_PATH");
+        env::remove_var("ASSET_DIR");
     }
 
     #[test]
@@ -53,6 +57,7 @@ mod tests {
         assert_eq!(config.port, 8080);
         assert_eq!(config.public_base_url, "http://localhost:8080");
         assert_eq!(config.database_path, "./urls.sqlite3");
+        assert_eq!(config.asset_dir, "frontend/dist");
         clear_env();
     }
 
@@ -63,10 +68,12 @@ mod tests {
         env::set_var("PORT", "9090");
         env::set_var("PUBLIC_BASE_URL", "https://sho.rt/");
         env::set_var("DATABASE_PATH", "/tmp/custom/urls.sqlite3");
+        env::set_var("ASSET_DIR", "/app/dist");
         let config = Config::from_env();
         assert_eq!(config.port, 9090);
         assert_eq!(config.public_base_url, "https://sho.rt/");
         assert_eq!(config.database_path, "/tmp/custom/urls.sqlite3");
+        assert_eq!(config.asset_dir, "/app/dist");
         clear_env();
     }
 }

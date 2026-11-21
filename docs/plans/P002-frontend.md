@@ -133,17 +133,17 @@ Frontend versions listed above were also approved by the user.
 
 ## Tasks
 
-- [ ] 1. Scaffold `frontend/` with pinned package.json, tsconfig and Vite config.
-- [ ] 2. Implement `index.html`, `main.tsx`, `styles.css`.
-- [ ] 3. Implement `validation.ts` and `api.ts`.
-- [ ] 4. Implement `App.tsx` state machine, form, result and copy behaviour.
-- [ ] 5. Add Vitest/RTL tests covering all R002 scenarios.
-- [ ] 6. Extend Rust serving with `index.html` handler and `/assets` ServeDir.
-- [ ] 7. Add Node build stage to Dockerfile; set `ASSET_DIR`; update `.dockerignore`.
-- [ ] 8. Update `AGENTS.md` with frontend check commands.
-- [ ] 9. Run `npm test`, `npm run build`, `npx tsc --noEmit`, and P001's cargo checks.
-- [ ] 10. Run Docker smoke incl. asset paths and unknown-code 404.
-- [ ] 11. Record the browser smoke test evidence.
+- [x] 1. Scaffold `frontend/` with pinned package.json, tsconfig and Vite config.
+- [x] 2. Implement `index.html`, `main.tsx`, `styles.css`.
+- [x] 3. Implement `validation.ts` and `api.ts`.
+- [x] 4. Implement `App.tsx` state machine, form, result and copy behaviour.
+- [x] 5. Add Vitest/RTL tests covering all R002 scenarios.
+- [x] 6. Extend Rust serving with `index.html` handler and `/assets` ServeDir.
+- [x] 7. Add Node build stage to Dockerfile; set `ASSET_DIR`; update `.dockerignore`.
+- [x] 8. Update `AGENTS.md` with frontend check commands.
+- [x] 9. Run `npm test`, `npm run build`, `npx tsc --noEmit`, and P001's cargo checks.
+- [x] 10. Run Docker smoke incl. asset paths and unknown-code 404.
+- [x] 11. Record the browser smoke test evidence in `docs/reviews/R002-browser-smoke.md`.
 - [ ] 12. Launch the `verifier` with R002 + P002 and include its report.
 
 ## Traceability
@@ -168,6 +168,13 @@ Frontend versions listed above were also approved by the user.
 | REQ-016 | `Dockerfile` Node → Rust stages | `docker compose up --build`, single host/container |
 | REQ-017 | Rust router (no fallback service) | "Short-code paths are not captured by the SPA" |
 | REQ-018 | `App.tsx` result state replacement | "Only the latest result is shown" |
+
+## Implementation notes
+
+- A single `tsconfig.json` is used with `tsc --noEmit && vite build`; the separate
+  `tsconfig.node.json` sketched in the plan was unnecessary.
+- `npx tsc --noEmit` is part of `npm run build` rather than a separate command.
+- Browser smoke evidence is recorded in `docs/reviews/R002-browser-smoke.md`.
 
 ## Status
 

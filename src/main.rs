@@ -2,9 +2,11 @@ use std::path::Path;
 use std::str::FromStr;
 use std::sync::Arc;
 
+use axum::response::Html;
 use axum::routing::{get, post};
 use axum::Router;
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
+use tower_http::services::ServeDir;
 
 use url_shortener::code::Base62Generator;
 use url_shortener::config::Config;
@@ -36,7 +38,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         code_generator: Arc::new(Base62Generator),
     };
 
+    let index_html = std::fs::read_to_string(format!("{}/index.html", config.asset_dir))
+        .map_err(|error| format!("cannot read frontend index: {error}"))?;
+    let assets = ServeDir::new(format!("{}/assets", config.asset_dir));
+
     let app = Router::new()
+        .route(
+            "/",
+            get(move || {
+                let html = index_html.clone();
+                async move { Html(html) }
+            }),
+        )
+        .nest_service("/assets", assets)
         .route("/api/v1/urls", post(handlers::create_url))
         .route("/:code", get(handlers::redirect))
         .route("/health", get(handlers::health))

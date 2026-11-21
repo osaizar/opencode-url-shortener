@@ -64,8 +64,11 @@ Docker smoke: `docker compose up --build -d`, then check `GET /health`, `POST /a
 and the returned redirect; `docker compose down && docker compose up -d` verifies that
 mappings survive container recreation via the named volume.
 
-Frontend commands (`npm test`, `npm run build`, `npx tsc --noEmit` in `frontend/`) will be
-added when P002 is implemented.
+Frontend (run from `frontend/`):
+
+- `npm ci`
+- `npm test`
+- `npm run build` (runs `tsc --noEmit && vite build`)
 
 ## Safety
 
