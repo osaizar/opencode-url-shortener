@@ -1,0 +1,57 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // The coding agent is the default; planning is entered through /spec and /plan.
+  "default_agent": "build",
+
+  // The built-in plan agent is read-only for project files. Allow it to author
+  // documents under docs/ only, so it cannot touch implementation code.
+  "agents": {
+    "plan": {
+      "permissions": [
+        { "action": "edit", "resource": "docs/**", "effect": "allow" }
+      ]
+    }
+  },
+
+  "permissions": [
+    { "action": "shell", "resource": "git push *", "effect": "ask" }
+  ],
+
+  // The code-review skill runs its Standards and Spec axes in two sub-agents.
+  // The verifier is itself a sub-agent, so nested sub-agents must be allowed.
+  // Re-check this experimental setting against the current docs on upgrades.
+  "experimental": {
+    "subagent_depth": 2
+  },
+
+  "mcp": {
+    "servers": {
+      // OAuth by default — no API key needed. Sign in via /mcps.
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      }
+
+      // Headless/CI alternative — use ONE server, never both active:
+      // "context7-key": {
+      //   "type": "remote",
+      //   "url": "https://mcp.context7.com/mcp",
+      //   "oauth": false,
+      //   "headers": { "Authorization": "Bearer {env:CONTEXT7_API_KEY}" }
+      // },
+
+      // Optional, disabled until needed:
+      // "github": {
+      //   "type": "remote",
+      //   "url": "https://api.githubcopilot.com/mcp/",
+      //   "disabled": true
+      // },
+      // "playwright": {
+      //   "type": "local",
+      //   "command": ["npx", "-y", "@playwright/mcp"],
+      //   "disabled": true
+      // }
+    }
+  }
+}
