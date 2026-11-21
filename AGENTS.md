@@ -24,7 +24,7 @@ session in this project.
 | Implementation plans | `docs/plans/` | `P###-<slug>.md` |
 | Architecture decisions | `docs/decisions/` | `ADR###-<slug>.md` |
 | Spec reviews | `docs/reviews/` | `<id>-spec-review.md` |
-| Verification reports | `docs/reviews/` | `<id>-verification.md` |
+| Verification reports | `docs/reviews/` | `<id>-verification.md` (archived runs: `<id>-verification-<stage>.md`) |
 | Templates | `docs/<area>/_template.md` | edit only when the format changes |
 
 Pick the next number by scanning the directory; never reuse a number.

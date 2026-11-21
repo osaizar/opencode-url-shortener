@@ -12,10 +12,6 @@ impl Store {
         Self { pool }
     }
 
-    pub fn pool(&self) -> &SqlitePool {
-        &self.pool
-    }
-
     /// Returns true when the mapping was inserted, false when the code already exists.
     pub async fn insert(&self, code: &str, target_url: &str) -> AppResult<bool> {
         let result = sqlx::query("INSERT OR IGNORE INTO urls (code, target_url) VALUES (?, ?)")

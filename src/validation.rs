@@ -3,7 +3,7 @@ use url::Url;
 use crate::error::ApiError;
 
 pub fn validate_target(input: &str) -> Result<(), ApiError> {
-    if input.len() > 2048 {
+    if input.chars().count() > 2048 {
         return Err(ApiError::InvalidUrl);
     }
 
@@ -41,11 +41,15 @@ mod tests {
     fn enforces_the_2048_character_boundary() {
         let base = "https://example.com/";
         let accepted = format!("{}{}", base, "a".repeat(2048 - base.len()));
-        assert_eq!(accepted.len(), 2048);
+        assert_eq!(accepted.chars().count(), 2048);
         assert!(validate_target(&accepted).is_ok());
 
         let rejected = format!("{}{}", base, "a".repeat(2049 - base.len()));
-        assert_eq!(rejected.len(), 2049);
+        assert_eq!(rejected.chars().count(), 2049);
         assert!(validate_target(&rejected).is_err());
+
+        let multibyte = format!("{}{}", base, "é".repeat(2048 - base.chars().count()));
+        assert_eq!(multibyte.chars().count(), 2048);
+        assert!(validate_target(&multibyte).is_ok());
     }
 }

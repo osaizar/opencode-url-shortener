@@ -40,10 +40,10 @@ Layers, from outside in:
    `internal_error` (500). A global fallback handler (or per-handler mapping) covers
    unexpected panics/errors.
 7. **Configuration & runtime.** `Config::from_env()` with defaults `PORT=8080`,
-   `PUBLIC_BASE_URL=http://localhost:8080` (trailing slashes trimmed before appending
-   `/<code>`) and `DATABASE_PATH=./urls.sqlite3`. Compose sets
-   `DATABASE_PATH=/data/urls.sqlite3` explicitly for the container. `#[tokio::main]` +
-   `axum::serve`.
+   `PUBLIC_BASE_URL=http://localhost:8080` and `DATABASE_PATH=./urls.sqlite3`. Compose sets
+   `DATABASE_PATH=/data/urls.sqlite3` explicitly for the container. The create handler
+   trims trailing slashes from `PUBLIC_BASE_URL` before appending `/<code>`.
+   `#[tokio::main]` + `axum::serve`.
 8. **Packaging.** Multi-stage Dockerfile (Rust builder → slim runtime); Compose maps the
    host port and mounts a named volume at `/data`.
 
@@ -142,7 +142,7 @@ differs (Risks).
 - [x] 11. Update `AGENTS.md` with the exact verification commands.
 - [x] 12. Run fmt/clippy/tests; fix failures.
 - [x] 13. Run Docker smoke test incl. container-recreation persistence.
-- [ ] 14. Launch the `verifier` with R001 + P001 and include its report.
+- [x] 14. Launch the `verifier` with R001 + P001 and include its report — PASS, see `docs/reviews/R001-verification.md`.
 
 ## Traceability
 
@@ -151,7 +151,7 @@ differs (Risks).
 | REQ-001 | `src/handlers.rs` `create_url`; `src/main.rs` POST route | "Shorten a valid URL and use the link" / `tests/api.rs::create_endpoint` |
 | REQ-002 | `src/code.rs` `Base62Generator` | `src/code.rs` unit test + "Shorten a valid URL..." |
 | REQ-003 | `src/store.rs` `insert` collision + retry in `create_url`; `SequenceGenerator` | "Generated code collision is retried" |
-| REQ-004 | `migrations/0001_create_urls.sql`, `src/store.rs`, `DATABASE_PATH` config | "Mappings survive a process restart" |
+| REQ-004 | `migrations/0001_create_urls.sql`, `src/store.rs`, `DATABASE_PATH` config | "Mappings survive a process restart" (live-process check in `R001-verification.md`) + "Mappings survive container recreation" (Docker smoke) |
 | REQ-005 | `create_url` always generates a new code; no unique index on `target_url` | "Repeated submission of the same URL gets a new code" |
 | REQ-006 | `src/handlers.rs` `CreateUrlResponse` with `201` | "Shorten a valid URL and use the link" |
 | REQ-007 | `src/validation.rs` scheme + host checks | "Invalid target URL is rejected" (outline) |

@@ -125,8 +125,8 @@ There are two independent gates, served by two subagents:
 - writes `docs/reviews/<id>-verification.md`;
 - never edits code; stops if there is no implementation yet, deferring to `/spec-review`.
 
-Since no stack is chosen yet, the verifier reports "no automated checks configured" until
-test commands exist.
+The Rust backend now has configured checks (`cargo fmt`, `cargo clippy`, `cargo test` in
+`AGENTS.md`). Frontend checks will be added when P002 is implemented.
 
 ## Future extension: automatic verification on session idle
 
