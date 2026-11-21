@@ -103,7 +103,7 @@ No Rust, Docker, compose or AGENTS.md changes are needed.
 - [x] 5. Add theme tests and confirm the unchanged R002 suite still passes.
 - [x] 6. Run `npm test` and `npm run build`; check the 320px layout in a browser.
 - [x] 7. Record browser smoke evidence in `docs/reviews/R003-verification-browser-smoke.md`.
-- [ ] 8. Launch the `verifier` with R003 + P003 and include its report.
+- [x] 8. Launch the `verifier` with R003 + P003 and include its report — PASS, see `docs/reviews/R003-verification.md`.
 
 ## Traceability
 
@@ -131,6 +131,10 @@ No Rust, Docker, compose or AGENTS.md changes are needed.
   `READY` fallback for non-clipboard errors; browser smoke is named as the authoritative
   verification for computed styles that jsdom cannot evaluate. Suggestions #3 (scenario
   count) and #4 (bundled assertions) require no action.
+- After `docs/reviews/R003-verification.md` (non-blocking suggestions #6 and #8): the
+  boot overlay ends at `visibility: hidden` rather than being removed from the DOM, and
+  the typing effect animates `clip-path` only — both behaviourally equivalent. The smoke
+  evidence was extended with the verifier's additional computed-style checks.
 
 ## Status
 

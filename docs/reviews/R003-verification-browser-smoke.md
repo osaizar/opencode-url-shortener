@@ -28,6 +28,16 @@ Headless Chromium at `320x800` with a 2 s virtual-time budget: form fits within 
 viewport, no horizontal overflow, bracketed title on one line. Screenshot:
 `/tmp/opencode/r003-320.png`.
 
+## Additional computed checks (from `R003-verification.md`)
+
+The verifier's independent headless run supplied checks not covered above:
+
+- In-flight status `SHORTENING...` computed colour `rgb(255, 176, 0)`.
+- Copy success status `COPY OK` together with the `Copied!` button label.
+- Validation error `URL must use http or https` computed colour `rgb(255, 95, 86)`.
+- With `prefers-reduced-motion: reduce`, cursor `animation-name: none`, `.boot`
+  `display: none`, and input/button/status remain visible.
+
 ## Verdict
 
 All observed behaviour matches R003; no blocking findings from the smoke test.
