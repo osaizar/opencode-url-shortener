@@ -143,8 +143,8 @@ Frontend versions listed above were also approved by the user.
 - [x] 8. Update `AGENTS.md` with frontend check commands.
 - [x] 9. Run `npm test`, `npm run build`, `npx tsc --noEmit`, and P001's cargo checks.
 - [x] 10. Run Docker smoke incl. asset paths and unknown-code 404.
-- [x] 11. Record the browser smoke test evidence in `docs/reviews/R002-browser-smoke.md`.
-- [ ] 12. Launch the `verifier` with R002 + P002 and include its report.
+- [x] 11. Record the browser smoke test evidence in `docs/reviews/R002-verification-browser-smoke.md`.
+- [x] 12. Launch the `verifier` with R002 + P002 and include its report — PASS, see `docs/reviews/R002-verification.md`.
 
 ## Traceability
 
@@ -174,7 +174,11 @@ Frontend versions listed above were also approved by the user.
 - A single `tsconfig.json` is used with `tsc --noEmit && vite build`; the separate
   `tsconfig.node.json` sketched in the plan was unnecessary.
 - `npx tsc --noEmit` is part of `npm run build` rather than a separate command.
-- Browser smoke evidence is recorded in `docs/reviews/R002-browser-smoke.md`.
+- Browser smoke evidence is recorded in `docs/reviews/R002-verification-browser-smoke.md`.
+- `index.html` is read at startup and captured in a closure on the `/` route rather than
+  stored on `AppState` as Approach 7 sketched; behaviourally equivalent.
+- The browser smoke file was renamed after verification to match the `AGENTS.md`
+  artifact naming table.
 
 ## Status
 
