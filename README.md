@@ -115,7 +115,7 @@ There are two independent gates, served by two subagents:
 - checks EARS quality, `REQ-###` coverage by Gherkin scenarios, testability and scope;
 - checks the plan's traceability from every `REQ-###` to a change and a test;
 - writes `docs/reviews/<id>-spec-review.md` with a PASS/FAIL verdict;
-- stops if implementation already exists, deferring to `/review`.
+- stops if this requirement is already implemented, deferring to `/review`.
 
 **After implementation — `/review` (the `verifier` subagent):**
 

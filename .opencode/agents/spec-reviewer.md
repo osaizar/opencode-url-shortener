@@ -26,9 +26,12 @@ The caller will give you a requirement ID (`R###`) and a plan ID (`P###`). Resol
 to `docs/requirements/R###-*.md` and `docs/plans/P###-*.md`. If either is missing or not
 marked Approved, stop and report what is missing.
 
-Check whether implementation exists by looking for a project manifest or source tree
-outside `docs/` (for example `Cargo.toml`, `package.json`, `src/`, `tests/`). If it does,
-stop and direct the caller to `/review` (the post-implementation gate).
+Determine whether **this requirement** has been implemented. A pre-existing codebase is
+normal when adding a new requirement to an existing project, so do not stop merely because
+`Cargo.toml`, `package.json`, `src/` or `tests/` exist. Use a fixed point supplied by the
+caller and `git diff <fixed-point>...HEAD` (or the caller's explicit confirmation) to decide.
+Only stop and direct the caller to `/review` when the diff actually contains changes that
+implement this requirement.
 
 ## Procedure
 
