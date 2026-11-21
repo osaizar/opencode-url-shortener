@@ -1,16 +1,65 @@
 :root {
-  font-family: system-ui, sans-serif;
-  color: #111827;
+  --phosphor: #33ff66;
+  --bg: #050805;
+  --amber: #ffb000;
+  --error: #ff5f56;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--phosphor);
+  background: var(--bg);
 }
 
 body {
   margin: 0;
   padding: 1rem;
+  min-height: 100vh;
+  color: var(--phosphor);
+  background: var(--bg);
+  text-shadow: 0 0 6px rgb(51 255 102 / 55%);
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(51 255 102 / 6%) 0 1px,
+    transparent 1px 4px
+  );
+}
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  color: var(--phosphor);
+  background: var(--bg);
+  animation: boot-out 500ms ease-out forwards;
 }
 
 .page {
+  box-sizing: border-box;
   max-width: 40rem;
-  margin: 0 auto;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid var(--phosphor);
+  box-shadow: 0 0 24px rgb(51 255 102 / 15%);
+  background: rgb(5 8 5 / 92%);
+}
+
+.crt-title {
+  margin-top: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+}
+
+.crt-title::after {
+  content: "_";
+  animation: blink 1s step-end infinite;
 }
 
 form {
@@ -23,24 +72,65 @@ label {
   font-weight: 600;
 }
 
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prompt {
+  font-weight: 700;
+}
+
 input {
+  flex: 1;
+  min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-input,
-button {
-  font: inherit;
   padding: 0.5rem;
+  color: var(--phosphor);
+  background: #000;
+  border: 1px solid var(--phosphor);
+  font: inherit;
 }
 
-:focus-visible {
-  outline: 2px solid #1d4ed8;
-  outline-offset: 2px;
+button {
+  padding: 0.5rem 0.75rem;
+  color: var(--bg);
+  background: var(--phosphor);
+  border: 1px solid var(--phosphor);
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  color: var(--phosphor);
+  background: transparent;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.status {
+  margin: 0.75rem 0 0;
+  font-weight: 700;
+}
+
+.status-busy {
+  color: var(--amber);
+  text-shadow: 0 0 6px rgb(255 176 0 / 55%);
+}
+
+.status-error {
+  color: var(--error);
+  text-shadow: 0 0 6px rgb(255 95 86 / 55%);
 }
 
 .error {
-  color: #b91c1c;
+  color: var(--error);
+  text-shadow: 0 0 6px rgb(255 95 86 / 45%);
 }
 
 .result {
@@ -51,12 +141,71 @@ button {
   overflow-wrap: anywhere;
 }
 
+.result a {
+  color: var(--phosphor);
+  animation: typing 600ms steps(40, end) both;
+}
+
 a {
-  color: #1d4ed8;
+  color: var(--phosphor);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes boot-out {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes typing {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 @media (max-width: 360px) {
   .page {
-    padding: 0;
+    margin: 0.5rem auto;
+    padding: 0.75rem;
+  }
+
+  .crt-title {
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .boot {
+    display: none;
+  }
+
+  .result a {
+    clip-path: none;
   }
 }

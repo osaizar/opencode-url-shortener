@@ -96,13 +96,13 @@ No Rust, Docker, compose or AGENTS.md changes are needed.
 
 ## Tasks
 
-- [ ] 1. Add palette variables and monospace/CRT panel styles to `styles.css`.
-- [ ] 2. Add scanline/glow overlay, cursor and boot/typing keyframes with reduced-motion rules.
-- [ ] 3. Add status line and prompt prefix to `App.tsx`, wiring the five exact status values.
-- [ ] 4. Keep the R002 alert/fallback text and button labels unchanged.
-- [ ] 5. Add theme tests and confirm the unchanged R002 suite still passes.
-- [ ] 6. Run `npm test` and `npm run build`; check the 320px layout in a browser.
-- [ ] 7. Record browser smoke evidence.
+- [x] 1. Add palette variables and monospace/CRT panel styles to `styles.css`.
+- [x] 2. Add scanline/glow overlay, cursor and boot/typing keyframes with reduced-motion rules.
+- [x] 3. Add status line and prompt prefix to `App.tsx`, wiring the five exact status values.
+- [x] 4. Keep the R002 alert/fallback text and button labels unchanged.
+- [x] 5. Add theme tests and confirm the unchanged R002 suite still passes.
+- [x] 6. Run `npm test` and `npm run build`; check the 320px layout in a browser.
+- [x] 7. Record browser smoke evidence in `docs/reviews/R003-verification-browser-smoke.md`.
 - [ ] 8. Launch the `verifier` with R003 + P003 and include its report.
 
 ## Traceability
