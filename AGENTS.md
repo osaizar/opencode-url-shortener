@@ -54,9 +54,18 @@ Check for updates with `npx skills check` and apply them with `npx skills update
 
 ## Verification commands
 
-No stack is chosen yet. Discover test and check commands from this file or the project
-manifest; if none exist, report "no automated checks configured" rather than inventing
-them. Once a stack is chosen, document the exact commands here.
+Rust backend (run from the repository root, with `$HOME/.cargo/env` sourced):
+
+- `cargo fmt --all -- --check`
+- `cargo clippy --all-targets -- -D warnings`
+- `cargo test --all-targets`
+
+Docker smoke: `docker compose up --build -d`, then check `GET /health`, `POST /api/v1/urls`
+and the returned redirect; `docker compose down && docker compose up -d` verifies that
+mappings survive container recreation via the named volume.
+
+Frontend commands (`npm test`, `npm run build`, `npx tsc --noEmit` in `frontend/`) will be
+added when P002 is implemented.
 
 ## Safety
 

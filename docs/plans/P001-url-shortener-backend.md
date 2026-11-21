@@ -130,18 +130,18 @@ differs (Risks).
 ## Tasks
 
 - [x] 1. Install/verify Rust toolchain (or decide Docker-only builds); record in verification report. — Done: rustup stable 1.100.0 installed locally.
-- [ ] 2. Scaffold `Cargo.toml` with pinned dependencies and `src/main.rs` skeleton.
-- [ ] 3. Implement `Config::from_env` with defaults and env overrides.
-- [ ] 4. Add migration and `Store` with `insert`/`find`.
-- [ ] 5. Implement `validate_target` and its unit tests.
-- [ ] 6. Implement `CodeGenerator`, `Base62Generator`, `SequenceGenerator`.
-- [ ] 7. Implement `ApiError` and exact error bodies.
-- [ ] 8. Implement the three handlers and router; wire `AppState`.
-- [ ] 9. Add integration tests for all R001 scenarios, including collision and 500 fault injection.
-- [ ] 10. Add Dockerfile, compose file, ignore files.
-- [ ] 11. Update `AGENTS.md` with the exact verification commands.
-- [ ] 12. Run fmt/clippy/tests; fix failures.
-- [ ] 13. Run Docker smoke test incl. container-recreation persistence.
+- [x] 2. Scaffold `Cargo.toml` with pinned dependencies and `src/main.rs` skeleton.
+- [x] 3. Implement `Config::from_env` with defaults and env overrides.
+- [x] 4. Add migration and `Store` with `insert`/`find`.
+- [x] 5. Implement `validate_target` and its unit tests.
+- [x] 6. Implement `CodeGenerator`, `Base62Generator`, `SequenceGenerator`.
+- [x] 7. Implement `ApiError` and exact error bodies.
+- [x] 8. Implement the three handlers and router; wire `AppState`.
+- [x] 9. Add integration tests for all R001 scenarios, including collision and 500 fault injection.
+- [x] 10. Add Dockerfile, compose file, ignore files.
+- [x] 11. Update `AGENTS.md` with the exact verification commands.
+- [x] 12. Run fmt/clippy/tests; fix failures.
+- [x] 13. Run Docker smoke test incl. container-recreation persistence.
 - [ ] 14. Launch the `verifier` with R001 + P001 and include its report.
 
 ## Traceability
