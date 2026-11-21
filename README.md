@@ -1,175 +1,144 @@
-# OpenCode Development Kit
+# URL Shortener — OpenCode framework demo
 
-A reusable, stack-agnostic [OpenCode](https://opencode.ai/) configuration kit: base
-configuration, one custom subagent, slash commands, local and third-party skills, an MCP
-server, and a requirements-first workflow with reusable document templates.
+A small but complete URL shortener: a Rust/axum backend, a React single-page UI, and a
+persistent SQLite database, all shipped as **one Docker image**.
 
-## What's inside
+This repository is also a **demo of the OpenCode development framework** described at
+<https://github.com/osaizar/opencode>. It shows that framework's requirements-first
+workflow in practice: EARS + BDD requirement documents, traceable implementation plans,
+architecture decisions, two independent review gates, skill-driven authoring and
+Context7 library lookups. Every feature was specified, planned, reviewed, implemented and
+verified through that workflow, and the resulting artifacts are kept under `docs/`.
 
-- **`opencode.jsonc`** — project config with the Context7 MCP server and a light override
-  of the built-in `plan` agent so it can author documents but not code.
-- **`AGENTS.md`** — persistent rules: workflow gates, artifact naming, definition of done.
-- **`.opencode/agents/spec-reviewer.md`** — custom subagent for the pre-implementation
-  gate: reviews requirement and plan quality, coverage and testability.
-- **`.opencode/agents/verifier.md`** — custom subagent for the post-implementation gate:
-  a read-only-to-code subagent that reviews the diff, runs checks and validates
-  acceptance criteria.
-- **`.opencode/commands/`** — `/spec`, `/plan`, `/spec-review`, `/review`, `/implement`.
-- **`.opencode/skills/`** — local skills for EARS+BDD authoring, planning, and Context7 docs.
-- **`.agents/skills/` + `skills-lock.json`** — skills installed from
-  [skills.sh](https://skills.sh/), committed for reproducibility.
-- **`docs/`** — templates and two complete worked examples (R001/R002).
+## What the app does
 
-OpenCode reuses its built-in `plan`, `build`, `explore` and `general` agents for everything
-else, so the kit adds only two agents: `spec-reviewer` and `verifier`
+- `POST /api/v1/urls` with `{"url": "https://..."}` → `201` with a 7-character base62
+  `code` and a ready-to-use `short_url`.
+- `GET /{code}` → `302` to the original URL; unknown codes return a structured `404`.
+- `GET /health` → `200 {"status": "ok"}`.
+- Consistent JSON errors (`invalid_url`, `invalid_request`, `not_found`, `internal_error`).
+- A retro-terminal UI for pasting a URL and copying the short link.
+- Configuration through `PORT`, `PUBLIC_BASE_URL`, `DATABASE_PATH` and `ASSET_DIR`.
+- Mappings survive restarts: Compose mounts a named volume at `/data`.
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Rust 1.100, axum 0.7, SQLx + SQLite, `rand` 0.9, `url` 2 |
+| Frontend | React 18.3, TypeScript 5.9, Vite 6.4, Vitest 3.2 + React Testing Library |
+| Delivery | Multi-stage Dockerfile (Node → Rust → slim runtime), Docker Compose |
+| Tooling | OpenCode config, custom agents, slash commands, skills, Context7 MCP |
 
 ## Quick start
 
-1. Copy this repo (or `opencode.jsonc`, `AGENTS.md`, `.opencode/`, `.agents/` and `docs/`)
-   into your project.
-2. Install the third-party skills (Node.js >= 22.20 required):
+Prerequisites: Docker + Compose, Rust via `rustup`, Node.js ≥ 22.20.
 
-   ```bash
-   npx skills add mattpocock/skills \
-     --skill grill-me --skill implement-spec --skill code-review \
-     -a opencode -y
+```bash
+docker compose up --build -d
+curl http://localhost:8080/health
+# open http://localhost:8080 in a browser
+```
 
-   npx skills add vercel-labs/skills --skill find-skills -a opencode -y
+`docker compose down` stops it; the named volume keeps the database. Use
+`docker compose down -v` only if you want to delete saved links.
 
-   # grill-me is a pointer to the grilling skill; install that too.
-   npx skills add mattpocock/skills --skill grilling -a opencode -y
-   ```
+For local development without Docker:
 
-3. Start OpenCode, run `/mcps`, select **context7** and sign in with OAuth. Confirm with
-   `opencode mcp list` that it reports `connected`.
-4. Begin with `/spec "short feature description"`.
+```bash
+cd frontend && npm ci && npm run build && cd ..
+source "$HOME/.cargo/env" && cargo run
+```
 
-Config and command changes reload automatically. Use `/reload` to force a full reload.
+The backend reads the built SPA from `frontend/dist` by default; set `ASSET_DIR` to point
+elsewhere. To change the API port or public base URL, set `PORT` and `PUBLIC_BASE_URL`.
 
-## Workflow
+## Repository layout
+
+```
+src/                     Rust backend (handlers, validation, store, code generation)
+frontend/src/            React UI and component tests
+migrations/              SQLite schema
+tests/api.rs             Backend integration tests
+Dockerfile               Three-stage build: frontend assets, Rust binary, runtime image
+docker-compose.yml       Port mapping, env vars and the persistent data volume
+opencode.jsonc           OpenCode config: Context7 MCP, plan-agent override, permissions
+AGENTS.md                Persistent rules, artifact locations, verification commands
+.opencode/agents/        spec-reviewer (pre-implementation), verifier (post-implementation)
+.opencode/commands/      /spec, /plan, /spec-review, /implement, /review
+.opencode/skills/        Local skills: EARS+BDD authoring, planning, Context7 docs
+.agents/skills/          Third-party skills vendored via skills-lock.json
+docs/                    Templates plus R###/P###/ADR### artifacts and review reports
+```
+
+## OpenCode workflow
 
 ```
 /spec  →  /plan  →  /spec-review  →  /implement  →  /review  →  done
 ```
 
-1. **`/spec "<feature>"`** — the `plan` agent uses `grill-me` to clarify the feature with
-   you, then `requirements-earns-bdd` to write `docs/requirements/R###-<slug>.md`.
-   Requirements are EARS statements with stable `REQ-###` IDs; acceptance criteria are
-   Gherkin `Given/When/Then` scenarios linked to those IDs.
-2. **Refine** — ask `general` or `explore` to challenge completeness and feasibility. Do
-   not proceed until you approve the spec.
-3. **`/plan R###`** — writes `docs/plans/P###-<slug>.md`: approach, alternatives, file-level
-   changes, test strategy, risks, task checklist and `REQ-###` traceability. An ADR is
-   recorded in `docs/decisions/` only for consequential decisions.
-4. **`/spec-review R### P###`** — the `spec-reviewer` subagent independently checks the
-   documents for gaps, contradictions, coverage holes and untestable criteria. It writes
-   `docs/reviews/<requirement-id>-spec-review.md`. Iterate until clean.
-5. **`/implement P###`** — the `build` agent writes code and tests, uses Context7 for
-   library APIs, and finishes by launching the `verifier` subagent.
-6. **Final `/review`** on the diff. Done when every Gherkin scenario passes and the
-   verification report has no blocking findings.
+1. **`/spec "<feature>"`** — the `plan` agent uses `grilling` to clarify the feature,
+   then `requirements-earns-bdd` to write `docs/requirements/R###-<slug>.md`: EARS
+   statements with stable `REQ-###` IDs and Gherkin `Given/When/Then` scenarios.
+2. **Refine** — challenge completeness and feasibility, then approve the spec.
+3. **`/plan R###`** — writes `docs/plans/P###-<slug>.md` with approach, alternatives,
+   file-level changes, test strategy, risks, ordered tasks and `REQ-###` traceability.
+   Consequential decisions get an ADR in `docs/decisions/`.
+4. **`/spec-review R### P###`** — the `spec-reviewer` subagent checks document quality,
+   coverage, testability and traceability, and writes
+   `docs/reviews/<id>-spec-review.md`.
+5. **`/implement P###`** — the `build` agent writes code and tests, using Context7 for
+   library APIs, then launches the `verifier`.
+6. **Final `/review`** — the `verifier` reviews the diff, runs the checks, verifies every
+   Gherkin scenario and writes `docs/reviews/<id>-verification.md`. Done when every
+   scenario passes and there are no blocking findings.
 
-## Skills
+`AGENTS.md` enforces the gates: no implementation code until the requirement and plan are
+approved, and independent verification both before and after implementation.
 
-Local skills (`.opencode/skills/`) win on ID collisions with installed skills:
+## Artifacts in this repo
 
-| Skill | Purpose |
-|---|---|
-| `requirements-earns-bdd` | Author EARS statements + Gherkin acceptance criteria |
-| `implementation-planning` | Produce traceable implementation plans |
-| `context7-docs` | Auto-triggered library doc lookups via Context7 |
-| `grill-me` | Pointer skill; delegates to `grilling` |
-| `grilling` | Clarify/stress-test requirements before authoring the spec |
-| `implement-spec` | Implement from the approved spec using a task graph |
-| `code-review` | Review checklist used by the verifier |
-| `find-skills` | Discover more skills later |
+| Requirement | Plan | Decision | Verification |
+|---|---|---|---|
+| `R001-url-shortener.md` (backend API) | `P001` | `ADR001` backend stack | `R001-spec-review.md`, `R001-verification.md` |
+| `R002-frontend.md` (SPA) | `P002` | `ADR002` frontend stack | `R002-spec-review.md`, `R002-verification.md` |
+| `R003-terminal-theme.md` (UI theme) | `P003` | — | `R003-spec-review.md`, `R003-verification.md` |
 
-Check for updates with `npx skills check`, list with `npx skills list`, and update project
-skills with `npx skills update -p -y`. Installed skills are vendored — review each
-`SKILL.md` before committing. Set `DISABLE_TELEMETRY=1` to opt out of skills.sh telemetry.
-Some skills use `context: fork` or hooks, which OpenCode does not support; the skills
-installed here use basic skills only. `grill-me` is a pointer to `grilling`, and
-`code-review` launches two sub-agents for its Standards/Spec axes — `opencode.jsonc`
-therefore enables `experimental.subagent_depth: 2` so the `verifier` sub-agent can spawn
-them. Re-check that experimental setting when upgrading OpenCode. `implement-spec` is
-adapted in `/implement`: the plan's task checklist stands in for its ticket graph, and its
-issue-tracker/PR/worktree steps are skipped.
+Browser smoke evidence is filed alongside the verification reports as
+`docs/reviews/R00#-verification-browser-smoke.md`.
 
-## MCP: Context7
+## Verification commands
 
-Configured in `opencode.jsonc` as a remote server at `https://mcp.context7.com/mcp` with
-OAuth (no API key in config). It exposes `context7_resolve-library-id` and
-`context7_query-docs`. A commented API-key variant is included for headless/CI use.
-Only Context7 is active; GitHub and Playwright are documented as disabled opt-ins to keep
-context usage low.
+From the repository root:
 
-Resolve library IDs with Context7 before finalising any plan that depends on a third-party
-API, and record them in the plan.
-
-## Verification
-
-There are two independent gates, served by two subagents:
-
-**Before implementation — `/spec-review` (the `spec-reviewer` subagent):**
-
-- checks EARS quality, `REQ-###` coverage by Gherkin scenarios, testability and scope;
-- checks the plan's traceability from every `REQ-###` to a change and a test;
-- writes `docs/reviews/<id>-spec-review.md` with a PASS/FAIL verdict;
-- stops if this requirement is already implemented, deferring to `/review`.
-
-**After implementation — `/review` (the `verifier` subagent):**
-
-- reads the diff and reports static findings by severity with `file:line`;
-- discovers and runs the project's test/check commands from `AGENTS.md` or the manifest;
-- marks each Gherkin scenario pass/fail with evidence;
-- writes `docs/reviews/<id>-verification.md`;
-- never edits code; stops if there is no implementation yet, deferring to `/spec-review`.
-
-The Rust backend now has configured checks (`cargo fmt`, `cargo clippy`, `cargo test` in
-`AGENTS.md`). Frontend checks will be added when P002 is implemented.
-
-## Future extension: automatic verification on session idle
-
-Verification is currently command-driven: `/implement` ends with the verifier subagent,
-and `/review` invokes it directly. If you want verification on *any* build session, add a
-small local plugin:
-
-```ts
-import { Plugin } from "@opencode/plugin"
-
-export default Plugin.define({
-  id: "auto-verify",
-  async setup(ctx) {
-    const controller = new AbortController()
-    void (async () => {
-      for await (const event of ctx.event.subscribe({
-        types: ["session.idle"],
-        signal: controller.signal,
-      })) {
-        const sessionID = event.data.sessionID
-        const session = await ctx.session.get({ sessionID })
-        if (session.agent !== "build" || session.parentID) continue
-        if (await ctx.storage.get(`verified:${sessionID}`)) continue
-        await ctx.storage.set(`verified:${sessionID}`, true)
-        await ctx.session.prompt({
-          sessionID,
-          text: "Launch the verifier subagent for this turn and include its report.",
-        })
-      }
-    })()
-    return () => controller.abort()
-  },
-})
+```bash
+cargo fmt --all -- --check
+cargo clippy --all-targets -- -D warnings
+cargo test --all-targets
 ```
 
-**Guard against loops:** injecting a prompt keeps the session agent as `build`, so an
-unguarded subscription re-triggers itself. The example above verifies each session once;
-a smarter version should compare the turn's diff against the last verified state. This
-plugin is documented but intentionally not included in the initial kit.
+From `frontend/`:
 
-## Customising for a new project
+```bash
+npm ci
+npm test
+npm run build        # runs tsc --noEmit && vite build
+```
 
-- Add your own `R###`/`P###` documents using the templates in `docs/`.
-- Once a stack is chosen, add `formatter`, `lsp` and test commands to `AGENTS.md` and
-  `opencode.jsonc`, then extend the verifier prompt with the exact check commands.
-- Keep `default_agent: "build"`; override individual built-ins rather than replacing them.
+The same commands are documented in `AGENTS.md` and are run by the `verifier`.
+
+## OpenCode configuration notes
+
+- `opencode.jsonc` keeps `default_agent: "build"` and overrides only the built-in `plan`
+  agent so it may author `docs/**` but not implementation code. `git push *` requires
+  approval, and `experimental.subagent_depth: 2` lets the verifier run its two review axes.
+- Context7 is configured as a remote MCP server with OAuth; sign in via `/mcps`. Library
+  IDs used by the implementation are recorded in the plans.
+- Local skills (`requirements-earns-bdd`, `implementation-planning`, `context7-docs`) win
+  on ID collisions with installed skills (`grill-me`, `grilling`, `implement-spec`,
+  `code-review`, `find-skills`). Check with `npx skills check`; update with
+  `npx skills update -p -y`.
+
+An optional local plugin could run the verifier on `session.idle` for any build session;
+it is described in the framework repository but intentionally not included here, because
+injecting a prompt would otherwise re-trigger itself.
