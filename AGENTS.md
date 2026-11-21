@@ -10,7 +10,9 @@ session in this project.
 - Requirements come first: EARS statements with stable `REQ-###` IDs, plus Gherkin
   `Given/When/Then` acceptance criteria linked to those IDs.
 - A plan must trace every `REQ-###` it addresses to a concrete change and a test.
-- Independent verification happens before implementation and again before completion.
+- Independent review of the requirement and plan (`/spec-review`) happens before
+  implementation; independent verification of the implementation (`/review`) happens
+  again before completion.
 - Never skip the gates because a change looks small. If the user explicitly asks to skip
   one, confirm before proceeding.
 
@@ -21,6 +23,7 @@ session in this project.
 | Requirements | `docs/requirements/` | `R###-<slug>.md` |
 | Implementation plans | `docs/plans/` | `P###-<slug>.md` |
 | Architecture decisions | `docs/decisions/` | `ADR###-<slug>.md` |
+| Spec reviews | `docs/reviews/` | `<id>-spec-review.md` |
 | Verification reports | `docs/reviews/` | `<id>-verification.md` |
 | Templates | `docs/<area>/_template.md` | edit only when the format changes |
 
@@ -28,6 +31,7 @@ Pick the next number by scanning the directory; never reuse a number.
 
 ## Definition of done
 
+- The pre-implementation spec review report has no blocking findings.
 - Every Gherkin acceptance scenario for the requirement passes, with evidence recorded
   in the verification report.
 - The verifier report has no blocking findings.

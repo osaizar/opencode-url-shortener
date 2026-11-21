@@ -7,6 +7,8 @@ subagent: true
 Verify: $ARGUMENTS
 
 Use the verifier workflow. Resolve the requirement ID (`R###`) and plan ID (`P###`) from
-the arguments, or find the most recent ones. Review the diff, run the available checks,
-test every Gherkin acceptance scenario, and write `docs/reviews/<requirement-id>-verification.md`.
-Return a severity-ordered summary with a clear pass/fail verdict.
+the arguments, or find the most recent ones. This is the **post-implementation** gate:
+review the diff, run the available checks, test every Gherkin acceptance scenario, and
+write `docs/reviews/<requirement-id>-verification.md`. Return a severity-ordered summary
+with a clear pass/fail verdict. If there is no implementation yet, stop and direct the
+caller to `/spec-review` instead.
