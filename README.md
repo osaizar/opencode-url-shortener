@@ -142,3 +142,12 @@ The same commands are documented in `AGENTS.md` and are run by the `verifier`.
 An optional local plugin could run the verifier on `session.idle` for any build session;
 it is described in the framework repository but intentionally not included here, because
 injecting a prompt would otherwise re-trigger itself.
+
+---
+
+## 0rwx framework
+
+> [!NOTE]
+>
+> | <picture><source srcset="https://raw.githubusercontent.com/NamtaoProductions/0rwx.com/main/static/AI-X-dark.svg" media="(prefers-color-scheme: dark)"><img src="https://raw.githubusercontent.com/NamtaoProductions/0rwx.com/main/static/AI-X-light.svg" alt="AI:X" height="32"></picture> | This repository follows **AI:X — EXECUTE ("I curate")** in the [0rwx framework](https://0rwx.com): the AI generated the code and the human curated and verified the output. |
+> | --- | --- |
