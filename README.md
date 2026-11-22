@@ -145,9 +145,6 @@ injecting a prompt would otherwise re-trigger itself.
 
 ---
 
-## 0rwx framework
+[ ![AI:X EXECUTE](https://raw.githubusercontent.com/NamtaoProductions/0rwx.com/main/static/AI-X-light.svg#gh-light-mode-only) ![AI:X EXECUTE](https://raw.githubusercontent.com/NamtaoProductions/0rwx.com/main/static/AI-X-dark.svg#gh-dark-mode-only)](https://0rwx.com)
 
-> [!NOTE]
->
-> | <picture><source srcset="https://raw.githubusercontent.com/NamtaoProductions/0rwx.com/main/static/AI-X-dark.svg" media="(prefers-color-scheme: dark)"><img src="https://raw.githubusercontent.com/NamtaoProductions/0rwx.com/main/static/AI-X-light.svg" alt="AI:X" height="32"></picture> | This repository follows **AI:X — EXECUTE ("I curate")** in the [0rwx framework](https://0rwx.com): the AI generated the code and the human curated and verified the output. |
-> | --- | --- |
+**This repository follows [X (EXECUTE)](https://0rwx.com) in the [0rwx framework](https://0rwx.com)** — AI has execute permissions (vibe coding): I vibe code, "I curate".
